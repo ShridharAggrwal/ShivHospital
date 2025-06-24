@@ -1,7 +1,7 @@
 const express = require('express');
 const adminProtect = require('../middleware/adminProtect');
 const { loginAdmin, forgotPasswordAdmin, resetPasswordAdmin } = require('../controllers/adminAuthContoller');
-const {getAllStaffs, updateStaffStatus, getPatientStats } = require('../controllers/personalizeContorllers/adminControllers')
+const {getAllStaffs, updateStaffStatus } = require('../controllers/personalizeContorllers/adminControllers')
 const router = express.Router();
 
 router.post('/loginAdmin', loginAdmin);
@@ -17,8 +17,5 @@ router.get('/admin-dashboard/staffs', adminProtect, getAllStaffs);
 
 // Update staff status
 router.patch('/admin-dashboard/staff-status/:staffId', adminProtect, updateStaffStatus);
-
-// Get patient statistics
-router.get('/admin-dashboard/patient-stats', adminProtect, getPatientStats);
 
 module.exports = router;
