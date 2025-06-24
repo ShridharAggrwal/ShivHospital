@@ -235,3 +235,101 @@ body {
 .App-link {
   color: #61dafb;
 }
+
+/* Additional mobile responsive styles */
+@media (max-width: 576px) {
+  /* More spacing for mobile dashboards */
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Adjust headings on mobile */
+  .display-6 {
+    font-size: 1.5rem;
+  }
+  
+  /* Improve table readability on mobile */
+  .table-responsive {
+    border-radius: 0.25rem;
+    overflow: hidden;
+  }
+  
+  /* Smaller buttons on mobile */
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Improve card appearance on mobile */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Improve form controls on mobile */
+  .input-group, .form-control {
+    font-size: 0.95rem;
+  }
+}
+
+/* Admin and Staff Dashboard styles */
+.dashboard-stat-card {
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dashboard-stat-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Table improvements */
+.table-hover tbody tr:hover {
+  background-color: rgba(39, 174, 96, 0.05);
+}
+
+/* Improve form responsiveness */
+.form-floating > label {
+  padding-left: 0.75rem;
+}
+
+/* Utilities for responsive text */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Patient List and Staff List improvements */
+.table-action-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  /* Stack cards on mobile */
+  .row {
+    --bs-gutter-x: 0.75rem;
+  }
+  
+  /* Make table text smaller on mobile */
+  .table {
+    font-size: 0.85rem;
+  }
+  
+  /* Better spacing for dashboard cards */
+  .dashboard-stat-card {
+    margin-bottom: 0.75rem;
+  }
+}
