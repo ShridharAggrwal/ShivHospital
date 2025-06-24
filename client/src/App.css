@@ -1,7 +1,7 @@
 #root {
-  max-width: 1440px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0;
   text-align: center;
 }
 
@@ -190,17 +190,178 @@ input[type="file"].form-control {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
   .card-body {
-    padding: 1.25rem;
+    padding: 1rem;
   }
   
   .form-control, .form-select, .btn {
     height: 45px;
     font-size: 0.95rem;
   }
-  
-  #root {
+
+  .table-responsive {
+    margin: 0 -1rem;
+    width: calc(100% + 2rem);
+    max-width: none;
+  }
+
+  .table {
+    font-size: 0.9rem;
+  }
+
+  .table td, .table th {
     padding: 0.5rem;
+    white-space: normal;
+  }
+
+  .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    width: calc(100% + 2rem);
+  }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-tabs .nav-link {
+    white-space: nowrap;
+    min-width: max-content;
+  }
+
+  .input-group {
+    flex-wrap: nowrap;
+  }
+
+  .input-group > .btn {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .container-fluid {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .card {
+    margin: 0 -8px;
+    border-radius: 0;
+  }
+
+  .table-responsive {
+    margin: 0 -0.5rem;
+    width: calc(100% + 1rem);
+  }
+
+  .table {
+    font-size: 0.85rem;
+  }
+
+  .table td, .table th {
+    padding: 0.4rem;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .nav-tabs .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Table specific responsive styles */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* Navigation tab styles */
+.nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 1.5rem;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  border-color: #e9ecef;
+  isolation: isolate;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background: transparent;
+}
+
+/* Action buttons in tables */
+.table-action-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+  margin: 0.125rem;
+  white-space: nowrap;
+}
+
+/* Search form responsiveness */
+.search-form {
+  margin-bottom: 1.5rem;
+}
+
+.search-form .input-group {
+  max-width: 100%;
+}
+
+/* Card header responsiveness */
+.card-header {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 374px) {
+  .card-header {
+    padding: 1rem;
+  }
+
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
   }
 }
 
