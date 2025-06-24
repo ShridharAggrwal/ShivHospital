@@ -14,7 +14,7 @@ const ForgotPasswordForm = ({ userType }) => {
   const checkServerRoutes = async () => {
     try {
       // Check if server is running
-      const rootResponse = await axios.get('http://localhost:8080/');
+      const rootResponse = await axios.get('https://shivhospital.onrender.com/');
       console.log('Server root response:', rootResponse.status);
       
       // This is just for debugging
@@ -54,8 +54,8 @@ const ForgotPasswordForm = ({ userType }) => {
         
         // Use the full URL directly
         const endpoint = userType === 'admin' 
-          ? 'http://localhost:8080/api/auth/forgotPasswordAdmin' 
-          : 'http://localhost:8080/api/auth/forgotPasswordStaff';
+          ? 'https://shivhospital.onrender.com/api/auth/forgotPasswordAdmin' 
+          : 'https://shivhospital.onrender.com/api/auth/forgotPasswordStaff';
         
         console.log(`Attempting to call endpoint: ${endpoint}`);
         
