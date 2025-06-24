@@ -61,35 +61,33 @@ const RegisterForm = () => {
     });
     
     return (
-        <div className="card shadow">
+        <div className="card shadow w-100">
             <div className="card-header bg-primary text-white">
                 <h3 className="text-center mb-0 fw-bold">Staff Registration</h3>
             </div>
-            <div className="card-body">
+            <div className="card-body px-3 px-md-4 py-4">
                 {error && (
                     <div className="alert alert-danger" role="alert">
-                        <i className="bi bi-x-circle me-2"></i>
+                        <i className="bi bi-exclamation-triangle me-2"></i>
                         {error}
                     </div>
                 )}
                 
                 {success && (
                     <div className="alert alert-success" role="alert">
-                        <div className="d-flex align-items-center mb-2">
-                            <i className="bi bi-check-circle-fill me-2 fs-5"></i>
-                            <strong>Registration Successful!</strong>
-                        </div>
-                        <p className="mb-0">{success}</p>
-                        <hr />
-                        <div className="d-flex align-items-center">
-                            <i className="bi bi-info-circle me-2"></i>
-                            <small className="text-muted">You will be able to login once an administrator approves your account.</small>
+                        <i className="bi bi-check-circle me-2"></i>
+                        {success}
+                        <div className="mt-3">
+                            <Link to="/login" className="btn btn-success">
+                                <i className="bi bi-arrow-left me-2"></i>
+                                Go to Login
+                            </Link>
                         </div>
                     </div>
                 )}
                 
                 {!success && (
-                    <form onSubmit={formik.handleSubmit}>
+                    <form onSubmit={formik.handleSubmit} noValidate>
                         <div className="mb-4">
                             <label htmlFor="name" className="form-label">
                                 <i className="bi bi-person me-2"></i>Full Name
@@ -108,9 +106,6 @@ const RegisterForm = () => {
                                     value={formik.values.name}
                                     placeholder="Enter your full name"
                                 />
-                                {formik.touched.name && formik.errors.name && (
-                                    <div className="invalid-feedback">{formik.errors.name}</div>
-                                )}
                             </div>
                         </div>
                         
@@ -132,9 +127,6 @@ const RegisterForm = () => {
                                     value={formik.values.email}
                                     placeholder="Enter your email"
                                 />
-                                {formik.touched.email && formik.errors.email && (
-                                    <div className="invalid-feedback">{formik.errors.email}</div>
-                                )}
                             </div>
                         </div>
                         
@@ -157,9 +149,6 @@ const RegisterForm = () => {
                                         value={formik.values.password}
                                         placeholder="Create a password"
                                     />
-                                    {formik.touched.password && formik.errors.password && (
-                                        <div className="invalid-feedback">{formik.errors.password}</div>
-                                    )}
                                 </div>
                                 <small className="form-text text-muted">
                                     Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
@@ -184,44 +173,33 @@ const RegisterForm = () => {
                                         value={formik.values.confirmPassword}
                                         placeholder="Confirm your password"
                                     />
-                                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                                        <div className="invalid-feedback">{formik.errors.confirmPassword}</div>
-                                    )}
                                 </div>
                             </div>
                         </div>
                         
-                        <div className="alert alert-info mb-4" role="alert">
-                            <div className="d-flex">
-                                <i className="bi bi-info-circle-fill me-2"></i>
-                                <span>
-                                    <strong>Note:</strong> After registration, your account will need to be approved 
-                                    by an administrator before you can log in.
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div className="d-grid gap-2 mt-4">
-                            <button 
-                                type="submit" 
+                        <div className="d-grid gap-2">
+                            <button
+                                type="submit"
                                 className="btn btn-primary py-2"
                                 disabled={loading}
                             >
                                 {loading ? (
                                     <>
                                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        Processing...
+                                        Registering...
                                     </>
                                 ) : (
-                                    <>Create Account <i className="bi bi-arrow-right ms-2"></i></>
+                                    <>
+                                        <i className="bi bi-person-plus me-2"></i>
+                                        Register
+                                    </>
                                 )}
                             </button>
-                        </div>
-                        
-                        <div className="text-center mt-4">
-                            <p className="mb-0">
-                                Already have an account? <Link to="/login" className="fw-bold text-primary text-decoration-none">Login here</Link>
-                            </p>
+                            
+                            <Link to="/login" className="btn btn-outline-secondary">
+                                <i className="bi bi-arrow-left me-2"></i>
+                                Back to Login
+                            </Link>
                         </div>
                     </form>
                 )}

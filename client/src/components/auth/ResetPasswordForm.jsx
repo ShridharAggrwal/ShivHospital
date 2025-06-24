@@ -33,11 +33,7 @@ const ResetPasswordForm = ({ userType }) => {
       setError('');
       
       try {
-        // Determine which API endpoint to use based on userType
-        const endpoint = userType === 'admin' 
-          ? '/resetPasswordAdmin' 
-          : '/resetPasswordStaff';
-        
+        const endpoint = userType === 'admin' ? '/resetPasswordAdmin' : '/resetPasswordStaff';
         const response = await axios.post(endpoint, {
           token,
           password: values.password
@@ -50,8 +46,8 @@ const ResetPasswordForm = ({ userType }) => {
           }, 3000);
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to reset password. The token may be invalid or expired.');
-        console.error('Reset password error:', err);
+        console.error('Error:', err);
+        setError(err.message || 'Failed to reset password');
       } finally {
         setLoading(false);
       }
@@ -61,20 +57,23 @@ const ResetPasswordForm = ({ userType }) => {
   if (resetSuccess) {
     return (
       <div className="card shadow border-0">
-        <div className="card-body p-5">
-          <div className="text-center mb-4">
-            <i className="bi bi-check-circle-fill text-success" style={{ fontSize: '3rem' }}></i>
-            <h2 className="mt-3">Password Reset Successful!</h2>
-          </div>
+        <div className="card-header bg-primary text-white p-4">
+          <h4 className="mb-0">
+            <i className="bi bi-check-circle me-2"></i>
+            Password Reset Successful
+          </h4>
+        </div>
+        <div className="card-body p-4">
           <div className="alert alert-success" role="alert">
-            <p>Your password has been successfully reset.</p>
-            <p className="mb-0">
-              You will be redirected to the login page in a few seconds.
-            </p>
+            <i className="bi bi-check-circle me-2"></i>
+            Your password has been reset successfully. You will be redirected to the login page shortly.
           </div>
-          <div className="text-center mt-4">
-            <Link to={userType === 'admin' ? '/admin-login' : '/login'} className="btn btn-primary">
-              <i className="bi bi-box-arrow-in-right me-2"></i>
+          <div className="text-center mt-3">
+            <Link 
+              to={userType === 'admin' ? '/admin-login' : '/login'} 
+              className="btn btn-primary"
+            >
+              <i className="bi bi-arrow-left me-2"></i>
               Go to Login
             </Link>
           </div>
@@ -99,7 +98,7 @@ const ResetPasswordForm = ({ userType }) => {
           </div>
         )}
         
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit} noValidate>
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
               New Password
@@ -116,12 +115,8 @@ const ResetPasswordForm = ({ userType }) => {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                placeholder="Enter new password"
               />
-              {formik.touched.password && formik.errors.password && (
-                <div className="invalid-feedback">
-                  {formik.errors.password}
-                </div>
-              )}
             </div>
             <small className="form-text text-muted">
               Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
@@ -144,12 +139,8 @@ const ResetPasswordForm = ({ userType }) => {
                 value={formik.values.confirmPassword}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                placeholder="Confirm new password"
               />
-              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                <div className="invalid-feedback">
-                  {formik.errors.confirmPassword}
-                </div>
-              )}
             </div>
           </div>
           

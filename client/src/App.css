@@ -86,8 +86,13 @@
   border-radius: 8px;
   padding: 0.75rem 1rem;
   border: 1px solid #ced4da;
-  font-size: 1rem;
+  font-size: 16px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+  color: #212529;
+  background-color: #fff;
+  min-height: 50px;
+  min-width: 100%;
 }
 
 .form-control:focus, .form-select:focus {
@@ -95,8 +100,104 @@
   box-shadow: 0 0 0 0.25rem rgba(39, 174, 96, 0.25);
 }
 
+.input-group {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 1rem;
+  min-height: 50px;
+}
+
+.input-group > .form-control,
+.input-group > .form-select {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  border-end-end-radius: 0;
+  border-start-end-radius: 0;
+  min-height: 50px;
+}
+
+/* Form validation styling */
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: none;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Hide validation messages */
+.invalid-feedback {
+  display: none !important;
+}
+
+/* Ensure text visibility */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+textarea,
+select {
+  color: #212529 !important;
+  background-color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* Ensure proper textarea sizing */
 textarea.form-control {
   min-height: 100px;
+  height: auto;
+}
+
+/* File input specific styling */
+input[type="file"].form-control {
+  padding: 0.375rem 0.75rem;
+  line-height: 1.5;
+}
+
+/* Ensure proper sizing on mobile */
+@media screen and (max-width: 576px) {
+  .form-control, 
+  .form-select,
+  .input-group-text {
+    font-size: 16px;
+    min-height: 50px;
+  }
+
+  .input-group {
+    min-height: 50px;
+  }
+
+  textarea.form-control {
+    min-height: 100px;
+  }
 }
 
 .form-label {
@@ -171,11 +272,6 @@ textarea.form-control {
 .home-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
-}
-
-/* File input styling */
-input[type="file"].form-control {
-  padding: 0.5rem;
 }
 
 /* Image preview styling */

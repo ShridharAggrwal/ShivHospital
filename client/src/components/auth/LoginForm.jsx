@@ -39,7 +39,7 @@ const LoginForm = ({ role = 'staff' }) => {
             }
         }
     });
-    
+
     // Determine error message and style based on the content
     const getErrorAlert = () => {
         if (!error) return null;
@@ -62,7 +62,7 @@ const LoginForm = ({ role = 'staff' }) => {
             </div>
         );
     };
-    
+
     return (
         <div className="card shadow w-100">
             <div className="card-header bg-primary text-white">
@@ -73,7 +73,7 @@ const LoginForm = ({ role = 'staff' }) => {
             <div className="card-body px-3 px-md-4 py-4">
                 {getErrorAlert()}
                 
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} noValidate>
                     <div className="mb-4">
                         <label htmlFor="email" className="form-label">
                             <i className="bi bi-envelope me-2"></i>Email Address
@@ -92,9 +92,6 @@ const LoginForm = ({ role = 'staff' }) => {
                                 value={formik.values.email}
                                 placeholder="Enter your email"
                             />
-                            {formik.touched.email && formik.errors.email && (
-                                <div className="invalid-feedback">{formik.errors.email}</div>
-                            )}
                         </div>
                     </div>
                     
@@ -116,9 +113,6 @@ const LoginForm = ({ role = 'staff' }) => {
                                 value={formik.values.password}
                                 placeholder="Enter your password"
                             />
-                            {formik.touched.password && formik.errors.password && (
-                                <div className="invalid-feedback">{formik.errors.password}</div>
-                            )}
                         </div>
                         <div className="text-end mt-1">
                             <Link 
@@ -131,9 +125,9 @@ const LoginForm = ({ role = 'staff' }) => {
                         </div>
                     </div>
                     
-                    <div className="d-grid gap-2 mt-4">
-                        <button 
-                            type="submit" 
+                    <div className="d-grid gap-2">
+                        <button
+                            type="submit"
                             className="btn btn-primary py-2"
                             disabled={loading}
                         >
@@ -143,7 +137,10 @@ const LoginForm = ({ role = 'staff' }) => {
                                     Logging in...
                                 </>
                             ) : (
-                                <>Sign In <i className="bi bi-arrow-right ms-2"></i></>
+                                <>
+                                    <i className="bi bi-box-arrow-in-right me-2"></i>
+                                    Login
+                                </>
                             )}
                         </button>
                     </div>

@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../../api/axios';
 
-const ForgotPasswordForm = ({ userType }) => {
+const ForgotPasswordForm = ({ userType = 'staff' }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
@@ -53,9 +53,7 @@ const ForgotPasswordForm = ({ userType }) => {
         }
         
         // Use the full URL directly
-        const endpoint = userType === 'admin' 
-          ? 'https://shivhospital.onrender.com/api/auth/forgotPasswordAdmin' 
-          : 'https://shivhospital.onrender.com/api/auth/forgotPasswordStaff';
+        const endpoint = userType === 'admin' ? '/forgotPasswordAdmin' : '/forgotPasswordStaff';
         
         console.log(`Attempting to call endpoint: ${endpoint}`);
         
@@ -104,22 +102,22 @@ const ForgotPasswordForm = ({ userType }) => {
   if (emailSent) {
     return (
       <div className="card shadow border-0">
-        <div className="card-body p-5">
-          <div className="text-center mb-4">
-            <i className="bi bi-envelope-check text-success" style={{ fontSize: '3rem' }}></i>
-            <h2 className="mt-3">Check Your Email</h2>
-          </div>
+        <div className="card-header bg-primary text-white p-4">
+          <h4 className="mb-0">
+            <i className="bi bi-envelope-check me-2"></i>
+            Check Your Email
+          </h4>
+        </div>
+        <div className="card-body p-4">
           <div className="alert alert-success" role="alert">
-            <p>
-              A password reset link has been sent to {formik.values.email}. 
-              Please check your email and follow the instructions to reset your password.
-            </p>
-            <p className="mb-0">
-              The link will expire in 10 minutes.
-            </p>
+            <i className="bi bi-check-circle me-2"></i>
+            Password reset instructions have been sent to your email.
           </div>
-          <div className="text-center mt-4">
-            <Link to={userType === 'admin' ? '/admin-login' : '/login'} className="btn btn-outline-primary">
+          <div className="text-center mt-3">
+            <Link 
+              to={userType === 'admin' ? '/admin-login' : '/login'} 
+              className="btn btn-primary"
+            >
               <i className="bi bi-arrow-left me-2"></i>
               Back to Login
             </Link>
@@ -145,7 +143,7 @@ const ForgotPasswordForm = ({ userType }) => {
           </div>
         )}
         
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit} noValidate>
           <div className="mb-4">
             <label htmlFor="email" className="form-label">
               Email Address
@@ -164,11 +162,6 @@ const ForgotPasswordForm = ({ userType }) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.email && formik.errors.email && (
-                <div className="invalid-feedback">
-                  {formik.errors.email}
-                </div>
-              )}
             </div>
             <small className="form-text text-muted">
               Enter the email address you used when you registered
@@ -184,12 +177,12 @@ const ForgotPasswordForm = ({ userType }) => {
               {loading ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Sending Email...
+                  Processing...
                 </>
               ) : (
                 <>
                   <i className="bi bi-envelope me-2"></i>
-                  Send Reset Link
+                  Send Reset Instructions
                 </>
               )}
             </button>
