@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { axiosPrivate } from '../../api/axios';
 import React from 'react';
+import PatientEditForm from './PatientEditForm';
 
 const PatientList = () => {
     const [patients, setPatients] = useState([]);
@@ -14,6 +15,10 @@ const PatientList = () => {
     const [sortBy, setSortBy] = useState('registrationDate');
     const [sortOrder, setSortOrder] = useState('desc');
     const [advancedSearch, setAdvancedSearch] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
+    const [selectedPatient, setSelectedPatient] = useState(null);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     // Fetch patients with search, sort and pagination
     const fetchPatients = async () => {
@@ -40,6 +45,14 @@ const PatientList = () => {
                     // In simple search mode, always search across all fields
                     searchParams.search = searchTerm;
                 }
+            }
+
+            // Add date range parameters if provided
+            if (startDate) {
+                searchParams.startDate = startDate;
+            }
+            if (endDate) {
+                searchParams.endDate = endDate;
             }
 
             const response = await axiosPrivate.get('/staff-dashboard/patients', {
@@ -107,8 +120,35 @@ const PatientList = () => {
     const resetSearch = () => {
         setSearchTerm('');
         setSearchField('all');
+        setStartDate('');
+        setEndDate('');
         setCurrentPage(1);
         fetchPatients();
+    };
+
+    // Handle edit patient
+    const handleEditPatient = (patient) => {
+        setSelectedPatient(patient);
+        setShowEditForm(true);
+        // Scroll to the edit form
+        setTimeout(() => {
+            const editForm = document.getElementById('patientEditFormSection');
+            if (editForm) {
+                editForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    };
+
+    // Handle successful patient update
+    const handlePatientUpdate = (updatedPatient) => {
+        // Update the patient in the list
+        setPatients(prevPatients => 
+            prevPatients.map(p => 
+                p._id === updatedPatient._id ? updatedPatient : p
+            )
+        );
+        // Close the edit form
+        setShowEditForm(false);
     };
 
     if (loading && patients.length === 0) {
@@ -147,6 +187,34 @@ const PatientList = () => {
             </div>
             
             <div className="card-body">
+                {/* Edit Patient Form - Shown when editing */}
+                {showEditForm && selectedPatient && (
+                    <div id="patientEditFormSection" className="mb-4">
+                        <div className="card border-primary">
+                            <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <h5 className="mb-0">
+                                    <i className="bi bi-pencil-square me-2"></i>
+                                    Edit Patient: {selectedPatient.name}
+                                </h5>
+                                <button 
+                                    type="button" 
+                                    className="btn-close btn-close-white" 
+                                    onClick={() => setShowEditForm(false)}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div className="card-body">
+                                <PatientEditForm 
+                                    patient={selectedPatient} 
+                                    onClose={() => setShowEditForm(false)}
+                                    onSuccess={handlePatientUpdate}
+                                    isInline={true}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Search Form */}
                 <form onSubmit={handleSearch} className="mb-4">
                     <div className="row">
@@ -193,6 +261,36 @@ const PatientList = () => {
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Date Range Search */}
+                                <div className="col-12 mt-2">
+                                    <div className="row">
+                                        <div className="col-md-6 col-lg-3 mb-3">
+                                            <label htmlFor="startDate" className="form-label">
+                                                <i className="bi bi-calendar-event me-1"></i> From Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id="startDate"
+                                                className="form-control"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 col-lg-3 mb-3">
+                                            <label htmlFor="endDate" className="form-label">
+                                                <i className="bi bi-calendar-event me-1"></i> To Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id="endDate"
+                                                className="form-control"
+                                                value={endDate}
+                                                onChange={(e) => setEndDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </>
                         ) : (
                             <div className="col-md-8 col-lg-6">
@@ -220,6 +318,34 @@ const PatientList = () => {
                 
                 {/* Patient Table */}
                 <div className="table-responsive">
+                    {/* Date filter indicator */}
+                    {(startDate || endDate) && (
+                        <div className="alert alert-info d-flex align-items-center mb-3" role="alert">
+                            <i className="bi bi-calendar-range me-2"></i>
+                            <div>
+                                <strong>Date Filter:</strong> 
+                                {startDate && endDate ? (
+                                    <span> From {new Date(startDate).toLocaleDateString()} to {new Date(endDate).toLocaleDateString()}</span>
+                                ) : startDate ? (
+                                    <span> From {new Date(startDate).toLocaleDateString()}</span>
+                                ) : (
+                                    <span> Until {new Date(endDate).toLocaleDateString()}</span>
+                                )}
+                                <button 
+                                    type="button" 
+                                    className="btn btn-sm btn-outline-secondary ms-2"
+                                    onClick={() => {
+                                        setStartDate('');
+                                        setEndDate('');
+                                        fetchPatients();
+                                    }}
+                                >
+                                    <i className="bi bi-x"></i> Clear Date Filter
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    
                     <table className="table table-hover align-middle">
                         <thead className="table-light">
                             <tr>
@@ -288,16 +414,26 @@ const PatientList = () => {
                                         </td>
                                         <td>
                                             <div className="d-flex gap-2 justify-content-center flex-wrap">
-                                                <a 
-                                                    href={patient.prescriptionFrontUrl} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    title="View front prescription"
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-secondary"
+                                                    onClick={() => handleEditPatient(patient)}
+                                                    title="Edit patient"
                                                 >
-                                                    <i className="bi bi-file-earmark-medical me-1 d-none d-sm-inline-block"></i>
-                                                    Front
-                                                </a>
+                                                    <i className="bi bi-pencil-square"></i>
+                                                </button>
+                                                
+                                                {patient.prescriptionFrontUrl && (
+                                                    <a 
+                                                        href={patient.prescriptionFrontUrl} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="btn btn-sm btn-outline-primary"
+                                                        title="View front prescription"
+                                                    >
+                                                        <i className="bi bi-file-earmark-medical"></i>
+                                                    </a>
+                                                )}
                                                 
                                                 {patient.prescriptionBackUrl && (
                                                     <a 
@@ -307,8 +443,7 @@ const PatientList = () => {
                                                         className="btn btn-sm btn-outline-primary"
                                                         title="View back prescription"
                                                     >
-                                                        <i className="bi bi-file-earmark me-1 d-none d-sm-inline-block"></i>
-                                                        Back
+                                                        <i className="bi bi-file-earmark"></i>
                                                     </a>
                                                 )}
                                             </div>

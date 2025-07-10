@@ -1,7 +1,7 @@
 const express = require('express');
 const adminProtect = require('../middleware/adminProtect');
 const { loginAdmin, forgotPasswordAdmin, resetPasswordAdmin } = require('../controllers/adminAuthContoller');
-const {getAllStaffs, updateStaffStatus, getPatients } = require('../controllers/personalizeContorllers/adminControllers')
+const {getAllStaffs, updateStaffStatus, getPatients } = require('../controllers/adminControllers')
 const router = express.Router();
 
 router.post('/loginAdmin', loginAdmin);

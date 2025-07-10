@@ -14,7 +14,7 @@ const ForgotPasswordForm = ({ userType = 'staff' }) => {
   const checkServerRoutes = async () => {
     try {
       // Check if server is running
-      const rootResponse = await axios.get('https://shivhospital.onrender.com/');
+      const rootResponse = await axios.get('http://localhost:8080/');
       console.log('Server root response:', rootResponse.status);
       
       // This is just for debugging

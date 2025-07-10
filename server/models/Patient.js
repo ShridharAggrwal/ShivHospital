@@ -39,7 +39,7 @@ const patientSchema = new mongoose.Schema({
   
   prescriptionFrontUrl: {
     type: String,
-    required: true
+    required: false
   },
   
   prescriptionBackUrl: {

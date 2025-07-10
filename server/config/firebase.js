@@ -106,6 +106,55 @@ try {
       }
     };
 
+    // Delete file from Firebase Storage
+    const deleteFile = async (fileUrl) => {
+      try {
+        if (!fileUrl) {
+          console.log('No file URL provided for deletion');
+          return false;
+        }
+
+        // Check if it's a mock URL
+        if (fileUrl.includes('mock-storage.example.com')) {
+          console.log('Mock URL detected, skipping deletion');
+          return true;
+        }
+
+        // Extract file path from the URL
+        // Format: https://storage.googleapis.com/BUCKET_NAME/FILE_PATH
+        const urlParts = fileUrl.split(`https://storage.googleapis.com/${bucket.name}/`);
+        
+        if (urlParts.length !== 2) {
+          console.log('Invalid file URL format');
+          return false;
+        }
+        
+        const filePath = urlParts[1];
+        const file = bucket.file(filePath);
+        
+        // Check if file exists before deleting
+        const [exists] = await file.exists();
+        if (!exists) {
+          console.log('File does not exist:', filePath);
+          return true; // Return true since the file is already gone
+        }
+        
+        // Delete the file
+        await file.delete();
+        console.log('File deleted successfully:', filePath);
+        return true;
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        return false;
+      }
+    };
+
+    // Mock delete function
+    const mockDeleteFile = async (fileUrl) => {
+      console.log('Using mock delete function for:', fileUrl);
+      return true;
+    };
+
     // Check if bucket is accessible
     bucket.getMetadata()
       .then(() => {
@@ -116,7 +165,7 @@ try {
         console.warn('Will use mock upload functionality when needed');
       });
 
-    module.exports = { uploadFile, bucket, admin };
+    module.exports = { uploadFile, deleteFile, bucket, admin };
   } else {
     throw new Error('Firebase credentials or storage bucket not configured in environment variables');
   }
@@ -126,6 +175,7 @@ try {
   // Export mock functions if Firebase initialization fails
   module.exports = { 
     uploadFile: mockUploadFile, 
+    deleteFile: mockDeleteFile,
     bucket: null, 
     admin: null 
   };

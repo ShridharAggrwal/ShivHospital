@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const staffAuthWithApproval = require('../middleware/staffProtect');
 const { registerStaff, loginStaff, forgotPasswordStaff, resetPasswordStaff } = require('../controllers/staffAuthControllers');
-const { registerPatient, getPatients, getPatientById } = require('../controllers/patientController');
+const { registerPatient, getPatients, getPatientById, updatePatient } = require('../controllers/patientController');
 const { upload } = require('../middleware/uploadMiddleware');
 
 router.post('/loginStaff', loginStaff);
@@ -22,6 +22,16 @@ router.post(
     { name: 'prescriptionBack', maxCount: 1 }
   ]),
   registerPatient
+);
+
+router.put(
+  '/staff-dashboard/patients/:id',
+  staffAuthWithApproval,
+  upload.fields([
+    { name: 'prescriptionFront', maxCount: 1 },
+    { name: 'prescriptionBack', maxCount: 1 }
+  ]),
+  updatePatient
 );
 
 router.get('/staff-dashboard/patients', staffAuthWithApproval, getPatients);

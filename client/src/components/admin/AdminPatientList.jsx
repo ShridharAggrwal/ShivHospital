@@ -6,19 +6,48 @@ const AdminPatientList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchField, setSearchField] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [sortBy, setSortBy] = useState('registrationDate');
     const [sortOrder, setSortOrder] = useState('desc');
+    const [advancedSearch, setAdvancedSearch] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     // Fetch patients with search, sort and pagination
     const fetchPatients = async () => {
         try {
             setLoading(true);
-            // Build search params
+            // Build search params based on selected field
             let searchParams = {};
             if (searchTerm) {
-                searchParams.search = searchTerm;
+                if (advancedSearch) {
+                    // In advanced search mode, use field-specific search
+                    if (searchField === 'mobileNo') {
+                        searchParams.mobileNo = searchTerm;
+                    } else if (searchField === 'name') {
+                        searchParams.name = searchTerm;
+                    } else if (searchField === 'address') {
+                        searchParams.address = searchTerm;
+                    } else if (searchField === 'alternativeNo') {
+                        searchParams.alternativeNo = searchTerm;
+                    } else {
+                        // If "All" is selected, use general search parameter
+                        searchParams.search = searchTerm;
+                    }
+                } else {
+                    // In simple search mode, always search across all fields
+                    searchParams.search = searchTerm;
+                }
+            }
+
+            // Add date range parameters if provided
+            if (startDate) {
+                searchParams.startDate = startDate;
+            }
+            if (endDate) {
+                searchParams.endDate = endDate;
             }
 
             const response = await axiosPrivate.get('/admin-dashboard/patients', {
@@ -52,6 +81,13 @@ const AdminPatientList = () => {
         fetchPatients();
     };
 
+    // Toggle advanced search
+    const toggleAdvancedSearch = () => {
+        setAdvancedSearch(!advancedSearch);
+        setSearchField('all');
+        setSearchTerm('');
+    };
+
     // Handle sort change
     const handleSort = (field) => {
         if (sortBy === field) {
@@ -77,6 +113,9 @@ const AdminPatientList = () => {
     // Reset search form
     const resetSearch = () => {
         setSearchTerm('');
+        setSearchField('all');
+        setStartDate('');
+        setEndDate('');
         setCurrentPage(1);
         fetchPatients();
     };
@@ -107,6 +146,13 @@ const AdminPatientList = () => {
                     <i className="bi bi-list-ul me-2"></i>
                     Patient Records
                 </h5>
+                <button 
+                    className="btn btn-outline-light btn-sm" 
+                    onClick={toggleAdvancedSearch}
+                >
+                    <i className={`bi ${advancedSearch ? 'bi-funnel-fill' : 'bi-funnel'} me-1`}></i>
+                    {advancedSearch ? 'Simple Search' : 'Advanced Search'}
+                </button>
             </div>
             
             <div className="card-body">
@@ -116,34 +162,131 @@ const AdminPatientList = () => {
                         <div className="col-12">
                             <label className="form-label fw-bold mb-2">
                                 <i className="bi bi-search me-1"></i> 
-                                Search Patients
+                                {advancedSearch ? 'Advanced Search' : 'Quick Search'}
                             </label>
                         </div>
                         
-                        <div className="col-md-8 col-lg-6">
-                            <div className="input-group">
-                                <span className="input-group-text">
-                                    <i className="bi bi-search"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Search by name, mobile, or address..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                <button type="submit" className="btn btn-primary">
-                                    <i className="bi bi-search me-1 d-none d-md-inline-block"></i>
-                                    Search
-                                </button>
-                                <button type="button" className="btn btn-outline-secondary" onClick={resetSearch}>
-                                    <i className="bi bi-x-lg"></i>
-                                </button>
+                        {advancedSearch ? (
+                            <>
+                                <div className="col-md-3 mb-3">
+                                    <select 
+                                        className="form-select" 
+                                        value={searchField}
+                                        onChange={(e) => setSearchField(e.target.value)}
+                                    >
+                                        <option value="all">All Fields</option>
+                                        <option value="name">Name</option>
+                                        <option value="mobileNo">Mobile Number</option>
+                                        <option value="alternativeNo">Alternative Number</option>
+                                        <option value="address">Address</option>
+                                    </select>
+                                    <div className="form-text">Select search field</div>
+                                </div>
+                                <div className="col-md-6 mb-3">
+                                    <div className="input-group">
+                                        <span className="input-group-text">
+                                            <i className="bi bi-search"></i>
+                                        </span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder={`Search by ${searchField === 'all' ? 'any field' : searchField}`}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                        <button type="submit" className="btn btn-primary">
+                                            Search
+                                        </button>
+                                        <button type="button" className="btn btn-outline-secondary" onClick={resetSearch}>
+                                            <i className="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Date Range Search */}
+                                <div className="col-12 mt-2">
+                                    <div className="row">
+                                        <div className="col-md-6 col-lg-3 mb-3">
+                                            <label htmlFor="startDate" className="form-label">
+                                                <i className="bi bi-calendar-event me-1"></i> From Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id="startDate"
+                                                className="form-control"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 col-lg-3 mb-3">
+                                            <label htmlFor="endDate" className="form-label">
+                                                <i className="bi bi-calendar-event me-1"></i> To Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id="endDate"
+                                                className="form-control"
+                                                value={endDate}
+                                                onChange={(e) => setEndDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="col-md-8 col-lg-6">
+                                <div className="input-group">
+                                    <span className="input-group-text">
+                                        <i className="bi bi-search"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Search patients..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <button type="submit" className="btn btn-primary">
+                                        <i className="bi bi-search me-1 d-none d-md-inline-block"></i>
+                                        Search
+                                    </button>
+                                    <button type="button" className="btn btn-outline-secondary" onClick={resetSearch}>
+                                        <i className="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                <div className="form-text">Search by name, mobile number, alternative number or address</div>
                             </div>
-                            <div className="form-text">Search by name, mobile number, or address</div>
-                        </div>
+                        )}
                     </div>
                 </form>
+                
+                {/* Date filter indicator */}
+                {(startDate || endDate) && (
+                    <div className="alert alert-info d-flex align-items-center mb-3" role="alert">
+                        <i className="bi bi-calendar-range me-2"></i>
+                        <div>
+                            <strong>Date Filter:</strong> 
+                            {startDate && endDate ? (
+                                <span> From {new Date(startDate).toLocaleDateString()} to {new Date(endDate).toLocaleDateString()}</span>
+                            ) : startDate ? (
+                                <span> From {new Date(startDate).toLocaleDateString()}</span>
+                            ) : (
+                                <span> Until {new Date(endDate).toLocaleDateString()}</span>
+                            )}
+                            <button 
+                                type="button" 
+                                className="btn btn-sm btn-outline-secondary ms-2"
+                                onClick={() => {
+                                    setStartDate('');
+                                    setEndDate('');
+                                    fetchPatients();
+                                }}
+                            >
+                                <i className="bi bi-x"></i> Clear Date Filter
+                            </button>
+                        </div>
+                    </div>
+                )}
                 
                 {/* Patient Table */}
                 <div className="table-responsive">

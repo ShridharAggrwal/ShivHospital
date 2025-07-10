@@ -1,5 +1,5 @@
-const Staff = require('../../models/Staff')
-const Patient = require('../../models/Patient')
+const Staff = require('../models/Staff')
+const Patient = require('../models/Patient')
 
 // Get all staff members
 const getAllStaffs = async (req, res) => {
@@ -46,18 +46,56 @@ const getPatients = async (req, res) => {
     const sortBy = req.query.sortBy || 'registrationDate';
     const sortOrder = req.query.sortOrder || 'desc';
     const search = req.query.search || '';
+    const { name, address, mobileNo, alternativeNo, startDate, endDate } = req.query;
 
     // Build query
-    let query = {};
+    const query = {};
+    
+    // Add search functionality
     if (search) {
-      query = {
-        $or: [
-          { name: { $regex: search, $options: 'i' } },
-          { mobileNo: { $regex: search, $options: 'i' } },
-          { alternativeNo: { $regex: search, $options: 'i' } },
-          { address: { $regex: search, $options: 'i' } }
-        ]
-      };
+      // General search across multiple fields
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { mobileNo: { $regex: search, $options: 'i' } },
+        { alternativeNo: { $regex: search, $options: 'i' } },
+        { address: { $regex: search, $options: 'i' } }
+      ];
+    } else {
+      // Specific field search
+      if (name) {
+        query.name = { $regex: name, $options: 'i' };
+      }
+      
+      if (address) {
+        query.address = { $regex: address, $options: 'i' };
+      }
+      
+      if (mobileNo) {
+        query.mobileNo = { $regex: mobileNo, $options: 'i' };
+      }
+      
+      if (alternativeNo) {
+        query.alternativeNo = { $regex: alternativeNo, $options: 'i' };
+      }
+    }
+    
+    // Add date range search
+    if (startDate || endDate) {
+      query.registrationDate = {};
+      
+      if (startDate) {
+        // Set start of day for startDate
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        query.registrationDate.$gte = start;
+      }
+      
+      if (endDate) {
+        // Set end of day for endDate
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.registrationDate.$lte = end;
+      }
     }
 
     // Get total count for pagination

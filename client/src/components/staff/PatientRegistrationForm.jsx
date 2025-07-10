@@ -33,7 +33,8 @@ const PatientRegistrationForm = ({ onSuccess }) => {
             address: Yup.string().required('Address is required'),
             mobileNo: Yup.string().required('Mobile number is required'),
             registrationDate: Yup.date().required('Registration date is required'),
-            prescriptionFront: Yup.mixed().required('Front prescription image is required')
+            // Front prescription image is now optional
+            prescriptionFront: Yup.mixed()
         }),
         onSubmit: async (values) => {
             setLoading(true);
@@ -311,7 +312,7 @@ const PatientRegistrationForm = ({ onSuccess }) => {
                         {/* Prescription Front Image */}
                         <div className="col-md-6 mb-3">
                             <label htmlFor="prescriptionFront" className="form-label">
-                                Prescription Front Image <span className="text-danger">*</span>
+                                Prescription Front Image <span className="text-muted">(Optional)</span>
                             </label>
                             <div className="input-group">
                                 <span className="input-group-text">
