@@ -1,32 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from '../../api/axios';
+import axios from 'axios';
+import axiosInstance from '../../api/axios';
 
 const ForgotPasswordForm = ({ userType = 'staff' }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [serverAvailable, setServerAvailable] = useState(true);
   const navigate = useNavigate();
   
-  // Add debugging for available routes
+  // Add debugging for available routes - use the axiosInstance instead of hardcoded URL
   const checkServerRoutes = async () => {
     try {
-      // Check if server is running
-      const rootResponse = await axios.get('https://shivhospital.onrender.com/');
-      console.log('Server root response:', rootResponse.status);
-      
-      // This is just for debugging
+      // Use relative path instead of hardcoded URL
+      const baseUrl = axiosInstance.defaults.baseURL.split('/api/auth')[0];
+      const rootResponse = await axios.get(`${baseUrl}/ping`, { timeout: 5000 });
+      console.log('Server ping response:', rootResponse.status);
+      setServerAvailable(true);
       return true;
     } catch (err) {
       console.error('Server connection error:', err);
+      setServerAvailable(false);
       return false;
     }
   };
   
-  // Check server on component mount
-  useState(() => {
+  // Check server on component mount using useEffect
+  useEffect(() => {
     checkServerRoutes();
   }, []);
 
@@ -47,9 +50,11 @@ const ForgotPasswordForm = ({ userType = 'staff' }) => {
         console.log('Submitting form with email:', values.email);
         
         // First check if server is accessible
-        const serverAvailable = await checkServerRoutes();
         if (!serverAvailable) {
-          throw new Error('Cannot connect to server');
+          await checkServerRoutes();
+          if (!serverAvailable) {
+            throw new Error('Cannot connect to server');
+          }
         }
         
         // Use the full URL directly
@@ -58,7 +63,7 @@ const ForgotPasswordForm = ({ userType = 'staff' }) => {
         console.log(`Attempting to call endpoint: ${endpoint}`);
         
         // Add timeout and more detailed options
-        const response = await axios({
+        const response = await axiosInstance({
           method: 'post',
           url: endpoint,
           data: { email: values.email },
@@ -136,6 +141,13 @@ const ForgotPasswordForm = ({ userType = 'staff' }) => {
         </h4>
       </div>
       <div className="card-body p-4">
+        {!serverAvailable && (
+          <div className="alert alert-warning" role="alert">
+            <i className="bi bi-wifi-off me-2"></i>
+            Server connection issue. The server might be waking up from sleep mode. Please try again.
+          </div>
+        )}
+        
         {error && (
           <div className="alert alert-danger" role="alert">
             <i className="bi bi-exclamation-triangle me-2"></i>

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: shivhospital
+    env: node
+    nodeVersion: 18.x
+    buildCommand: npm install && npm run postinstall
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      # These should be set in the Render dashboard
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: CLIENT_URL
+        value: https://shivhospitalpatients.netlify.app
+    healthCheckPath: /ping 
